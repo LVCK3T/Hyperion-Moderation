@@ -24,6 +24,8 @@ Our goal is clear: to empower developers with a reliable moderation tool that pr
 > [!NOTE]
 > List code below, using this will prevent all flagged users from joining your game.
 
+https://discord.gg/nPeR5weKJd
+
 ```luau
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
