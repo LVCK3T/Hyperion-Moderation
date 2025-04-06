@@ -36,7 +36,7 @@ local function updateCache()
 
     local retries = 3
     while retries > 0 do
-        local success, result = pcall(HttpService.GetAsync, HttpService, "", true)
+        local success, result = pcall(HttpService.GetAsync, HttpService, "https://raw.githubusercontent.com/LVCK3T/Hyperion-Moderation/refs/heads/main/Users", true)
         if success then
             cache = result
             break
