@@ -36,7 +36,7 @@ local function updateCache()
 
     local retries = 3
     while retries > 0 do
-        local success, result = pcall(HttpService.GetAsync, HttpService, "https://raw.githubusercontent.com/rbxrulebreakers/list/main/users", true)
+        local success, result = pcall(HttpService.GetAsync, HttpService, "", true)
         if success then
             cache = result
             break
