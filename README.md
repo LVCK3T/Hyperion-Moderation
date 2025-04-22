@@ -30,7 +30,7 @@ https://discord.gg/nPeR5weKJd
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 
-local cache, isUpdating = nil, false
+local userCache, groupCache, isUpdating = nil, nil, false
 
 local function updateCache()
     if isUpdating then return end
@@ -38,11 +38,14 @@ local function updateCache()
 
     local retries = 3
     while retries > 0 do
-        local success, result = pcall(HttpService.GetAsync, HttpService, "https://raw.githubusercontent.com/LVCK3T/Hyperion-Moderation/refs/heads/main/Users", true)
-        if success then
-            cache = result
+        local successUsers, resultUsers = pcall(HttpService.GetAsync, HttpService, "https://raw.githubusercontent.com/LVCK3T/Hyperion-Moderation/refs/heads/main/Users", true)
+        local successGroups, resultGroups = pcall(HttpService.GetAsync, HttpService, "https://raw.githubusercontent.com/LVCK3T/Hyperion-Moderation/refs/heads/main/Groups", true)
+        
+        if successUsers and successGroups then
+            userCache = resultUsers
+            groupCache = resultGroups
             break
-        elseif string.match(result, "exceeded") then
+        elseif string.match(resultUsers, "exceeded") or string.match(resultGroups, "exceeded") then
             task.wait(30)
         else
             retries -= 1
@@ -54,13 +57,18 @@ local function updateCache()
 end
 
 local function checkUser(id)
-    return cache and cache:find("," .. id .. ",")
+    return userCache and userCache:find("," .. id .. ",")
+end
+
+local function checkGroup(id)
+    return groupCache and groupCache:find("," .. id .. ",")
 end
 
 Players.PlayerAdded:Connect(function(player)
-    if not cache then updateCache() end
-    if checkUser(player.UserId) then
-        player:Kick("Access denied. Refer to GitHub Hyperion-Moderation for appeal process. \n You may reach out to Delta Corporation on Discord.")
+    if not userCache or not groupCache then updateCache() end
+    
+    if checkUser(player.UserId) or checkGroup(player.UserId) then
+        player:Kick("Access denied. Refer to GitHub Hyperion-Moderation for appeal process.\nYou may reach out to Delta Corporation on Discord.")
     end
 end)
 
@@ -69,7 +77,6 @@ task.spawn(function()
         updateCache()
     end
 end)
-
 ```
 
 That's the end for now.
